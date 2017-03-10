@@ -1,0 +1,6 @@
+---
+- name: staging
+  address: 1.2.3.4
+
+- name: testing
+  address: 2.3.4.5

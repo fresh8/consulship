@@ -1,0 +1,20 @@
+hash: bd778b800ad6eb906038d561c86d2b132e015a4251c6dcc4547ad3034fa79771
+updated: 2017-03-10T14:56:17.366187507Z
+imports:
+- name: github.com/connectedventures/gonfigurator
+  version: 4f4a620edc8cbc16368b3447be90cb3566dd01d3
+- name: github.com/ghodss/yaml
+  version: 04f313413ffd65ce25f2541bfd2b2ceec5c0908c
+- name: github.com/hashicorp/consul
+  version: 21f2d5ad0c02af6c4b32d8fd04f7c81e9b002d41
+  subpackages:
+  - api
+- name: github.com/hashicorp/go-cleanhttp
+  version: ad28ea4487f05916463e2423a55166280e8254b5
+- name: github.com/hashicorp/serf
+  version: cb45b412ee4f9d6cc2eeb2b2b7dd0f6cfd7545c1
+  subpackages:
+  - coordinate
+- name: gopkg.in/yaml.v2
+  version: a3f3340b5840cee44f372bddb5880fcbc419b46a
+testImports: []
