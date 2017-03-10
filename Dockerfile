@@ -1,5 +1,5 @@
 FROM alpine:3.5
 
-ADD ./consulship /usr/local/bin
+ADD ./consulship .
 
-ENTRYPOINT [ "/usr/local/bin/consulship" ]
+ENTRYPOINT [ "./consulship" ]
