@@ -15,21 +15,28 @@ type DependencyConfig struct {
 	Tags    []string `json:"tags"`
 }
 
-func parseDepConfigs() ([]DependencyConfig, []DependencyConfig, error) {
-	var baseDeps, localDeps []DependencyConfig
-	gonfigurator.ParseCustomFlag("/etc/consulship/dependencies.yaml", "baseDeps", &baseDeps)
+func parseDepConfigs(baseDeps, localDeps *[]DependencyConfig) error {
+	gonfigurator.ParseCustomFlag("/etc/consulship/dependencies.yaml", "baseDeps", baseDeps)
 
 	// Default local configuration to pwd
 	wd, err := os.Getwd()
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 
-	gonfigurator.ParseCustomFlag(fmt.Sprintf("%s/dependencies.yaml", wd), "deps", &localDeps)
+	gonfigurator.ParseCustomFlag(fmt.Sprintf("%s/dependencies.yaml", wd), "deps", localDeps)
 
-	return baseDeps, localDeps, nil
+	return nil
 }
 
 func mergeDepConfigs(baseDeps, localDeps []DependencyConfig) ([]DependencyConfig, error) {
+	for _, localDep := range localDeps {
+		for i, baseDep := range baseDeps {
+			if baseDep.Name == localDep.Name {
+				baseDeps[i] = localDep
+			}
+		}
+	}
+
 	return baseDeps, nil
 }

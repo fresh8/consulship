@@ -70,8 +70,9 @@ func copyConsulServices(deps []DependencyConfig) {
 
 func main() {
 	var consulEnvConfig []ConsulConfig
+	var baseDeps, localDeps []DependencyConfig
 
-	baseDeps, localDeps, err := parseDepConfigs()
+	err := parseDepConfigs(&baseDeps, &localDeps)
 	if err != nil {
 		log.Fatal(err)
 	}
