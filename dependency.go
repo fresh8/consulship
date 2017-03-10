@@ -31,12 +31,35 @@ func parseDepConfigs(baseDeps, localDeps *[]DependencyConfig) error {
 
 func mergeDepConfigs(baseDeps, localDeps []DependencyConfig) ([]DependencyConfig, error) {
 	for _, localDep := range localDeps {
+		inBase := false
 		for i, baseDep := range baseDeps {
 			if baseDep.Name == localDep.Name {
-				baseDeps[i] = localDep
+				baseDeps[i] = mergeDepConfig(baseDep, localDep)
+				inBase = true
+				break
 			}
+		}
+
+		if !inBase {
+			baseDeps = append(baseDeps, localDep)
 		}
 	}
 
 	return baseDeps, nil
+}
+
+func mergeDepConfig(base, local DependencyConfig) DependencyConfig {
+	if local.Env != "" {
+		base.Env = local.Env
+	}
+
+	if local.Version != "" {
+		base.Version = local.Version
+	}
+
+	if local.Port != 0 {
+		base.Port = local.Port
+	}
+
+	return base
 }
