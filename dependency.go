@@ -61,5 +61,7 @@ func mergeDepConfig(base, local DependencyConfig) DependencyConfig {
 		base.Port = local.Port
 	}
 
+	// TODO: Work out the best way to do tag merging - should local override regardless of if set or not?
+
 	return base
 }
