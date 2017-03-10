@@ -1,0 +1,13 @@
+---
+- name: junction
+  env: testing
+
+- name: redis
+  env: local
+  port: 6379
+  tags:
+    - cache
+
+- name: locker
+  env: local
+  version: 2.3.1 # when we add docker support for deps

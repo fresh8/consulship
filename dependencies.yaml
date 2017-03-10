@@ -1,12 +1,4 @@
 ---
-- name: junction
-  env: testing
-
 - name: redis
   env: local
-  tags:
-    - cache
-
-- name: locker
-  env: local
-  version: 2.3.1 # when we add docker support for deps
+  port: 5645

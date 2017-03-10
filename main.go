@@ -13,13 +13,6 @@ type ConsulConfig struct {
 	Address string `json:"address"`
 }
 
-type DependencyConfig struct {
-	Name    string   `json:"name"`
-	Env     string   `json:"env"`
-	Version string   `json:"version"`
-	Tags    []string `json:"tags"`
-}
-
 var (
 	consulByEnv = make(map[string]*api.Client)
 )
@@ -77,16 +70,25 @@ func copyConsulServices(deps []DependencyConfig) {
 
 func main() {
 	var consulEnvConfig []ConsulConfig
-	var depConfig []DependencyConfig
+	var baseDeps, localDeps []DependencyConfig
+
+	err := parseDepConfigs(&baseDeps, &localDeps)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	gonfigurator.ParseCustomFlag("/etc/consulship/consul-env.yaml", "consulEnv", &consulEnvConfig)
-	gonfigurator.ParseCustomFlag("/etc/consulship/dependencies.yaml", "deps", &depConfig)
 
 	createConsulClients(consulEnvConfig)
-	err := gonfigurator.Load()
+	err = gonfigurator.Load()
 
 	if err != nil {
 		log.Fatal("Cannot read yaml configurations")
+	}
+
+	depConfig, err := mergeDepConfigs(baseDeps, localDeps)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	createConsulClients(consulEnvConfig)
