@@ -63,7 +63,12 @@ func copyConsulServices(deps []DependencyConfig) {
 		if address == "" {
 			address = service.Address
 		}
-		_, err = consulByEnv["local"].Catalog().Register(&api.CatalogRegistration{ID: dep.Name, Address: address}, nil)
+		err = consulByEnv["local"].Agent().ServiceRegister(&api.AgentServiceRegistration{
+			ID:      dep.Name,
+			Name:    dep.Name,
+			Port:    service.ServicePort,
+			Address: address,
+		})
 		if err != nil {
 			log.Fatalf("Cannot register service %s with local consul", dep.Name)
 		}
