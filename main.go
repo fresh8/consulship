@@ -13,13 +13,6 @@ type ConsulConfig struct {
 	Address string `json:"address"`
 }
 
-type DependencyConfig struct {
-	Name    string   `json:"name"`
-	Env     string   `json:"env"`
-	Version string   `json:"version"`
-	Tags    []string `json:"tags"`
-}
-
 var (
 	consulByEnv = make(map[string]*api.Client)
 )
@@ -28,14 +21,24 @@ func main() {
 	var consulEnvConfig []ConsulConfig
 	consulAddr := os.Getenv("CONSUL_ADDR")
 
-	var depConfig []DependencyConfig
+	baseDeps, localDeps, err := parseDepConfigs()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	gonfigurator.ParseCustomFlag("/etc/consulship/consul-env.yaml", "consulEnv", &consulEnvConfig)
-	gonfigurator.ParseCustomFlag("/etc/consulship/dependencies.yaml", "deps", &depConfig)
-	err := gonfigurator.Load()
-
+	err = gonfigurator.Load()
 	if err != nil {
-		log.Fatal("Cannot read yaml configurations")
+		log.Fatal(err)
+	}
+
+	deps, err := mergeDepConfigs(baseDeps, localDeps)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, dep := range deps {
+		log.Println(dep.Name)
 	}
 
 	consulEnvConfig = append(consulEnvConfig, ConsulConfig{

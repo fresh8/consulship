@@ -4,6 +4,7 @@
 
 - name: redis
   env: local
+  port: 5645
   tags:
     - cache
 
