@@ -17,35 +17,15 @@ var (
 	consulByEnv = make(map[string]*api.Client)
 )
 
-func main() {
-	var consulEnvConfig []ConsulConfig
+func createConsulClients(consulEnvConfig []ConsulConfig) {
 	consulAddr := os.Getenv("CONSUL_ADDR")
-
-	baseDeps, localDeps, err := parseDepConfigs()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	gonfigurator.ParseCustomFlag("/etc/consulship/consul-env.yaml", "consulEnv", &consulEnvConfig)
-	err = gonfigurator.Load()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	deps, err := mergeDepConfigs(baseDeps, localDeps)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, dep := range deps {
-		log.Println(dep.Name)
-	}
 
 	consulEnvConfig = append(consulEnvConfig, ConsulConfig{
 		Name:    "local",
 		Address: consulAddr,
 	})
 
+	var err error
 	// Create consul clients from consul env config
 	for _, consulEnv := range consulEnvConfig {
 		config := api.DefaultConfig()
@@ -55,4 +35,56 @@ func main() {
 			log.Fatalf("Cannot create consul client for env %s: %s", consulEnv.Name, err.Error())
 		}
 	}
+}
+
+func copyConsulServices(deps []DependencyConfig) {
+	for _, dep := range deps {
+		sourceConsul, ok := consulByEnv[dep.Env]
+		if !ok {
+			log.Fatalf("No such consul env (%s) for service %s", dep.Env, dep.Name)
+		}
+		services, _, err := sourceConsul.Catalog().Service(dep.Name, "", nil)
+		if err != nil {
+			log.Fatalf("Cannot get service %s from consul env (%s)", dep.Name, dep.Env)
+		}
+		if len(services) == 0 {
+			log.Fatalf("Found no entries for service %s in consul env (%s)", dep.Name, dep.Env)
+		}
+
+		service := services[0]
+		address := service.ServiceAddress
+		if address == "" {
+			address = service.Address
+		}
+		_, err = consulByEnv["local"].Catalog().Register(&api.CatalogRegistration{ID: dep.Name, Address: address}, nil)
+		if err != nil {
+			log.Fatalf("Cannot register service %s with local consul", dep.Name)
+		}
+	}
+}
+
+func main() {
+	var consulEnvConfig []ConsulConfig
+
+	baseDeps, localDeps, err := parseDepConfigs()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	gonfigurator.ParseCustomFlag("/etc/consulship/consul-env.yaml", "consulEnv", &consulEnvConfig)
+
+	createConsulClients(consulEnvConfig)
+	err = gonfigurator.Load()
+
+	if err != nil {
+		log.Fatal("Cannot read yaml configurations")
+	}
+
+	depConfig, err := mergeDepConfigs(baseDeps, localDeps)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	createConsulClients(consulEnvConfig)
+	copyConsulServices(depConfig)
 }
