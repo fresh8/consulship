@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/connectedventures/gonfigurator"
+	"github.com/imdario/mergo"
 )
 
 type DependencyConfig struct {
@@ -30,38 +31,28 @@ func parseDepConfigs(baseDeps, localDeps *[]DependencyConfig) error {
 }
 
 func mergeDepConfigs(baseDeps, localDeps []DependencyConfig) ([]DependencyConfig, error) {
+	mappedDeps := make(map[string]DependencyConfig)
+
+	for _, baseDep := range baseDeps {
+		mappedDeps[baseDep.Name] = baseDep
+	}
+
 	for _, localDep := range localDeps {
-		inBase := false
-		for i, baseDep := range baseDeps {
-			if baseDep.Name == localDep.Name {
-				baseDeps[i] = mergeDepConfig(baseDep, localDep)
-				inBase = true
-				break
+		val, ok := mappedDeps[localDep.Name]
+		if ok {
+			err := mergo.Merge(&localDep, val)
+			if err != nil {
+				return nil, err
 			}
 		}
 
-		if !inBase {
-			baseDeps = append(baseDeps, localDep)
-		}
+		mappedDeps[localDep.Name] = localDep
 	}
 
-	return baseDeps, nil
-}
-
-func mergeDepConfig(base, local DependencyConfig) DependencyConfig {
-	if local.Env != "" {
-		base.Env = local.Env
+	deps := []DependencyConfig{}
+	for _, dep := range mappedDeps {
+		deps = append(deps, dep)
 	}
 
-	if local.Version != "" {
-		base.Version = local.Version
-	}
-
-	if local.Port != 0 {
-		base.Port = local.Port
-	}
-
-	// TODO: Work out the best way to do tag merging - should local override regardless of if set or not?
-
-	return base
+	return deps, nil
 }
