@@ -21,7 +21,10 @@ func main() {
 	var consulEnvConfig []ConsulConfig
 	consulAddr := os.Getenv("CONSUL_ADDR")
 
-	err := gonfigurator.Parse("/etc/consulship/consul-env.yaml", &consulEnvConfig)
+	gonfigurator.ParseCustomFlag("/etc/consulship/consul-env.yaml", "consulEnv", &consulEnvConfig)
+	gonfigurator.ParseCustomFlag("/etc/consulship/consul-env.yaml", "consulEnv2", &consulEnvConfig)
+	err := gonfigurator.Load()
+
 	if err != nil {
 		log.Fatal("Cannot read consul-env.yaml config")
 	}

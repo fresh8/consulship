@@ -1,8 +1,8 @@
 hash: bd778b800ad6eb906038d561c86d2b132e015a4251c6dcc4547ad3034fa79771
-updated: 2017-03-10T14:56:17.366187507Z
+updated: 2017-03-10T15:41:54.206832088Z
 imports:
 - name: github.com/connectedventures/gonfigurator
-  version: 4f4a620edc8cbc16368b3447be90cb3566dd01d3
+  version: d0ea4ec57c0dec3f1b54c073fcb8def860cc5765
 - name: github.com/ghodss/yaml
   version: 04f313413ffd65ce25f2541bfd2b2ceec5c0908c
 - name: github.com/hashicorp/consul
