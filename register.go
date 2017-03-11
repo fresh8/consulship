@@ -42,13 +42,17 @@ func registerRemoteService(dep DependencyConfig) error {
 		if address == "" {
 			address = service.Address
 		}
-		err = registerService(&api.AgentServiceRegistration{
+		reg := &api.AgentServiceRegistration{
 			ID:      dep.Name,
 			Name:    dep.Name,
 			Port:    service.ServicePort,
 			Address: address,
-			Tags:    []string{tag},
-		})
+		}
+		// when there is no tag we should pass an empty array
+		if tag != "" {
+			reg.Tags = append(reg.Tags, tag)
+		}
+		err = registerService(reg)
 		if err != nil {
 			return err
 		}
