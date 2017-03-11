@@ -8,6 +8,7 @@ import (
 )
 
 type DependencyConfig struct {
+	Address string   `json:"address"`
 	Name    string   `json:"name"`
 	Env     string   `json:"env"`
 	Version string   `json:"version"`

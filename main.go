@@ -49,37 +49,6 @@ func createConsulClients(consulEnvConfig []ConsulConfig) {
 	}
 }
 
-func copyConsulServices(deps []DependencyConfig) {
-	for _, dep := range deps {
-		sourceConsul, ok := consulByEnv[dep.Env]
-		if !ok {
-			log.Fatalf("No such consul env (%s) for service %s", dep.Env, dep.Name)
-		}
-		services, _, err := sourceConsul.Catalog().Service(dep.Name, "", nil)
-		if err != nil {
-			log.Fatalf("Cannot get service %s from consul env (%s)", dep.Name, dep.Env)
-		}
-		if len(services) == 0 {
-			log.Fatalf("Found no entries for service %s in consul env (%s)", dep.Name, dep.Env)
-		}
-
-		service := services[0]
-		address := service.ServiceAddress
-		if address == "" {
-			address = service.Address
-		}
-		err = consulByEnv["local"].Agent().ServiceRegister(&api.AgentServiceRegistration{
-			ID:      dep.Name,
-			Name:    dep.Name,
-			Port:    service.ServicePort,
-			Address: address,
-		})
-		if err != nil {
-			log.Fatalf("Cannot register service %s with local consul", dep.Name)
-		}
-	}
-}
-
 func main() {
 	var consulEnvConfig []ConsulConfig
 	var baseDeps, localDeps []DependencyConfig
