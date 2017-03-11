@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/connectedventures/gonfigurator"
 	"github.com/imdario/mergo"
@@ -17,15 +16,8 @@ type DependencyConfig struct {
 }
 
 func parseDepConfigs(baseDeps, localDeps *[]DependencyConfig) error {
-	gonfigurator.ParseCustomFlag("/etc/consulship/dependencies.yaml", "baseDeps", baseDeps)
-
-	// Default local configuration to pwd
-	wd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
-	gonfigurator.ParseCustomFlag(fmt.Sprintf("%s/dependencies.yaml", wd), "deps", localDeps)
+	gonfigurator.ParseCustomFlag(fmt.Sprintf("%s/configs/dependencies.yaml", workDir), "baseDeps", baseDeps)
+	gonfigurator.ParseCustomFlag(fmt.Sprintf("%s/configs/overrides/dependencies.yaml", workDir), "deps", localDeps)
 
 	return nil
 }

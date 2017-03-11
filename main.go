@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -15,7 +16,18 @@ type ConsulConfig struct {
 
 var (
 	consulByEnv = make(map[string]*api.Client)
+
+	workDir string
 )
+
+func init() {
+	var err error
+	// Default local configuration to pwd
+	workDir, err = os.Getwd()
+	if err != nil {
+		log.Fatal("Cannot get working directory")
+	}
+}
 
 func createConsulClients(consulEnvConfig []ConsulConfig) {
 	consulAddr := os.Getenv("CONSUL_ADDR")
@@ -77,13 +89,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	gonfigurator.ParseCustomFlag("/etc/consulship/consul-env.yaml", "consulEnv", &consulEnvConfig)
+	gonfigurator.ParseCustomFlag(fmt.Sprintf("%s/.consulship/consul-env.yaml", workDir), "consulEnv", &consulEnvConfig)
 
 	createConsulClients(consulEnvConfig)
 	err = gonfigurator.Load()
 
 	if err != nil {
-		log.Fatal("Cannot read yaml configurations")
+		log.Fatalf("Cannot read yaml configurations: %s", err.Error())
 	}
 
 	depConfig, err := mergeDepConfigs(baseDeps, localDeps)
