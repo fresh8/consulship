@@ -6,7 +6,5 @@ deployment:
   hub:
     branch: feature/docker
     commands:
-      - make dockerise
-      - docker build --rm=false -t domudall/consulship .
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - docker push domudall/consulship
+      - make push-docker
