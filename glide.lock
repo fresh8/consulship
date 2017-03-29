@@ -1,18 +1,19 @@
-hash: 9f489625b07a0621b4e4f0e1e17ebb230cf23e3d9a031d6fe626a500830e94c1
-updated: 2017-03-10T19:40:06.2027645Z
+hash: 3b23fec125c981199ba236592adc43f914a88b2b00544cd2e6a2e19639bbd288
+updated: 2017-03-29T16:04:37.529064538+01:00
 imports:
 - name: github.com/connectedventures/gonfigurator
   version: d0ea4ec57c0dec3f1b54c073fcb8def860cc5765
+  repo: https://github.com/ConnectedVentures/gonfigurator
 - name: github.com/ghodss/yaml
-  version: 04f313413ffd65ce25f2541bfd2b2ceec5c0908c
+  version: bea76d6a4713e18b7f5321a2b020738552def3ea
 - name: github.com/hashicorp/consul
-  version: 21f2d5ad0c02af6c4b32d8fd04f7c81e9b002d41
+  version: 16fb1e27719dbbd4284bd4cc0f8b07596c7c024f
   subpackages:
   - api
 - name: github.com/hashicorp/go-cleanhttp
   version: ad28ea4487f05916463e2423a55166280e8254b5
 - name: github.com/hashicorp/serf
-  version: cb45b412ee4f9d6cc2eeb2b2b7dd0f6cfd7545c1
+  version: 1d4fa605f6ff3ed628d7ae5eda7c0e56803e72a5
   subpackages:
   - coordinate
 - name: github.com/imdario/mergo
