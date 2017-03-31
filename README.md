@@ -17,9 +17,6 @@ with Consul service discovery by:
 
 ```go
 go get github.com/fresh8/consulship
-glide install -v
-go build .
-go install .
 ```
 
 This will install `consulship` and it's dependencies within your `GOPATH`.
