@@ -1,5 +1,7 @@
 # ConsulShip
 
+[![Dependency Status](https://dependencyci.com/github/fresh8/consulship/badge)](https://dependencyci.com/github/fresh8/consulship)
+
 A tool to help relieve the growing pains of developing copious microservices
 with Consul service discovery by:
 
