@@ -14,6 +14,8 @@ type ConsulConfig struct {
 	Address string `json:"address"`
 }
 
+const defaultLocalConsulAddr = "localhost:8500"
+
 var (
 	consulByEnv = make(map[string]*api.Client)
 
@@ -30,11 +32,14 @@ func init() {
 }
 
 func createConsulClients(consulEnvConfig []ConsulConfig) {
-	consulAddr := os.Getenv("CONSUL_ADDR")
+	localConsulAddr := os.Getenv("LOCAL_CONSUL_ADDR")
+	if localConsulAddr == "" {
+		localConsulAddr = defaultLocalConsulAddr
+	}
 
 	consulEnvConfig = append(consulEnvConfig, ConsulConfig{
 		Name:    "local",
-		Address: consulAddr,
+		Address: localConsulAddr,
 	})
 
 	var err error
