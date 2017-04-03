@@ -47,3 +47,6 @@ to a UI screen which shows registered services.
 ### Attaching configured services to your consul instance
 
 Once you are running consul and have set up the dependency files, just run `consulship` in the root alongside your `configs` and `.consulship` directory!
+
+We assume that you are running consul on `localhost:8500`, if this is not the case you may override it by passing `LOCAL_CONSUL_ADDR={your IP:PORT}` as an environment
+variable on the command, your command will then become `LOCAL_CONSUL_ADDR={your IP:PORT} consulship`
