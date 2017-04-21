@@ -69,7 +69,7 @@ func copyConsulServices(deps []DependencyConfig) {
 			err = registerRemoteService(dep)
 		}
 		if err != nil {
-			log.Fatalf("Cannot register service %s with local consul", dep.Name)
+			log.Fatalf("Cannot register service %s with local consul: %s", dep.Name, err.Error())
 		}
 	}
 }
