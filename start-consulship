@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Download consul-env.yaml and start consul+consulship
+set -e
+consul_port() {
+  local envname=$1
+  docker ps --filter "label=consulship-env=$envname" --format "{{ .Ports }}" | tr "," \\n  | grep 8500 | sed -E 's/.*:([0-9]+).*/\1/'
+}
+
+envname=$(basename $PWD)
+join_envname=$1
+if [[ ! -z $join_envname ]]; then
+  envname=$join_envname
+  echo Joining existing subenv $envname
+fi
+
+CONSUL_VERSION=0.7.5
+
+env_consul_port=$(consul_port $envname)
+if [[ ! -z $env_consul_port && -z $join_envname ]]; then
+  container=$(docker ps --filter "label=consulship-env=$envname" --format "{{ .ID }}")
+  docker stop $container
+  docker rm $container
+  env_consul_port=
+fi
+
+if [[ -z $env_consul_port ]]; then
+  echo Starting consul for subenv $envname
+  docker run -P -d -l consulship-env=$envname consul:$CONSUL_VERSION agent -server -bootstrap -ui -client=0.0.0.0
+fi
+
+env_consul_port=$(consul_port $envname)
+consul_addr=127.0.0.1:$env_consul_port
+docker run -it -e LOCAL_CONSUL_ADDR=$consul_addr -v $PWD:/app consulship
+CONSUL_ADDR=$consul_addr make run
