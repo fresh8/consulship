@@ -43,7 +43,7 @@ You may now update the dependencies file to correspond to registered consul serv
 We recommend you install consul through a docker container for simplicity's sake. Ensure that the ports are
 being mapped to the default ports (`8500` => `localhost:8500` etc.).
 
-You can test it is mapped correctly and running by hitting localhost:8500 in your browser, this should lead you
+You can test it is mapped correctly and running by hitting `http://localhost:8500` in your browser, this should lead you
 to a UI screen which shows registered services.
 
 ### Attaching configured services to your consul instance
