@@ -30,5 +30,5 @@ fi
 
 env_consul_port=$(consul_port $envname)
 consul_addr=127.0.0.1:$env_consul_port
-docker run -it -e LOCAL_CONSUL_ADDR=$consul_addr -v $PWD:/app consulship
+docker run -it -e LOCAL_CONSUL_ADDR=$(docker ps --filter "label=consulship-env=$envname" --format "{{ .Names }}"):8500 -v $PWD:/app fresh8/consulship:latest
 CONSUL_ADDR=$consul_addr make run
