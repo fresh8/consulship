@@ -15,6 +15,7 @@ fi
 
 CONSUL_VERSION=0.7.5
 
+network=$envname-consulship
 env_consul_port=$(consul_port $envname)
 if [[ ! -z $env_consul_port && -z $join_envname ]]; then
   container=$(docker ps --filter "label=consulship-env=$envname" --format "{{ .ID }}")
@@ -25,10 +26,12 @@ fi
 
 if [[ -z $env_consul_port ]]; then
   echo Starting consul for subenv $envname
-  docker run -P -d -l consulship-env=$envname consul:$CONSUL_VERSION agent -server -bootstrap -ui -client=0.0.0.0
+  docker network rm $network
+  docker network create $network
+  docker run --network $network --name ${envname}-consul -P -d -l consulship-env=$envname consul:$CONSUL_VERSION agent -server -bootstrap -ui -client=0.0.0.0
 fi
 
 env_consul_port=$(consul_port $envname)
 consul_addr=127.0.0.1:$env_consul_port
-docker run -it -e LOCAL_CONSUL_ADDR=$(docker ps --filter "label=consulship-env=$envname" --format "{{ .Names }}"):8500 -v $PWD:/app fresh8/consulship:latest
+docker run --network $network -it -e LOCAL_CONSUL_ADDR=${envname}-consul:8500 -v $PWD:/app fresh8/consulship:latest
 CONSUL_ADDR=$consul_addr make run
