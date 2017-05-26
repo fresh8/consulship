@@ -1,0 +1,24 @@
+{
+  "services": [
+    {
+      "id": "consul-env-service-1",
+      "name": "consul-env-service-1",
+      "address": "127.0.0.1",
+      "port": 1001
+    },
+    {
+      "id": "consul-env-service-2",
+      "name": "consul-env-service-2",
+      "address": "127.0.0.1",
+      "tags": ["consul-env-tag-1"],
+      "port": 1002
+    },
+    {
+      "id": "consul-env-service-3",
+      "name": "consul-env-service-3",
+      "address": "127.0.0.1",
+      "tags": ["consul-env-tag-2", "consul-env-tag-3"],
+      "port": 1003
+    }
+  ]
+}

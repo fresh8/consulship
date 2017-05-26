@@ -1,0 +1,17 @@
+---
+- name: local-service-1
+  env: local
+  address: 127.0.0.1
+  port: 3000
+  tags: ["local-tag-1", "local-tag-2"] # should register with two tags
+
+- name: consul-env-service-1
+  env: test-env
+
+- name: consul-env-service-2
+  env: test-env
+  tags: ["consul-env-tag-1"] # should copy service with this tag only
+
+- name: consul-env-service-3
+  env: test-env
+  tags: ["consul-env-tag-2", "consul-env-tag-3"] # should copy each service-tag combination
