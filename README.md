@@ -1,6 +1,6 @@
-# ConsulShip
+[![CircleCI](https://circleci.com/gh/fresh8/consulship.svg?style=svg)](https://circleci.com/gh/fresh8/consulship)[![Go Report Card](https://goreportcard.com/badge/github.com/fresh8/consulship)](https://goreportcard.com/report/github.com/fresh8/consulship)
 
-[![Dependency Status](https://dependencyci.com/github/fresh8/consulship/badge)](https://dependencyci.com/github/fresh8/consulship)[![CircleCI](https://circleci.com/gh/fresh8/consulship.svg?style=svg)](https://circleci.com/gh/fresh8/consulship)
+# Consulship
 
 A tool to help relieve the growing pains of developing copious microservices
 with Consul service discovery by:
