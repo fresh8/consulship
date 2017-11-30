@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -195,6 +196,11 @@ func TestMergeDepsConfig(t *testing.T) {
 
 	for _, test := range mergeTests {
 		got, err := mergeDepConfigs(test.base, test.local)
+
+		sort.Slice(got, func(i, j int) bool {
+			return got[i].Name < got[i].Name
+		})
+
 		if err != nil {
 			assert.Equal(t, test.err.Error(), err.Error(), test.name)
 		} else {

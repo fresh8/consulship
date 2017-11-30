@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/hashicorp/consul/api"
@@ -42,8 +43,12 @@ func registerRemoteService(dep DependencyConfig) error {
 		if address == "" {
 			address = service.Address
 		}
+		name := dep.Name
+		if tag != "" {
+			name = fmt.Sprintf("%s-%s", name, tag)
+		}
 		reg := &api.AgentServiceRegistration{
-			ID:      dep.Name,
+			ID:      name,
 			Name:    dep.Name,
 			Port:    service.ServicePort,
 			Address: address,
