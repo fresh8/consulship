@@ -27,16 +27,27 @@ This will install `consulship` and it's dependencies within your `GOPATH`.
 
 ### Files and directories
 
-Create the following files within your project, it's advisible to copy them from this repo.
-
+* `$HOME/.consulship`: file containing user consulship configuration as environment variables
 * `$PWD/configs/dependencies.yaml`: default configuration for dependencies (committed)
 * `$PWD/configs/overrides/dependencies.yaml`: user-specific overrides (gitignored)
 * `$PWD/.consulship/consul-env.yaml`: list of consul environments downloaded by the setup script (gitignored)
 
-Update your `consul-env.yaml` file to point at the relevant consul servers for that environment. We have included advice on whether or not
-you should gitignore the files, however it is ultimately up to you.
+### Local config
+First, create `$HOME/.consulship` and put the following line into it:
+```sh
+GS_CONSUL_ENVS=gs://<your bucket>/consul-env.yaml
+```
+This script requires you to store your list of consul environments/servers in a Google Cloud Storage bucket. It is currently the only method of obtaining consul envs using the script.
 
-You may now update the dependencies file to correspond to registered consul services across your environments.
+### Project dependencies
+You may now update the dependencies file to correspond to registered consul services across your environments. See [dependencies.yaml example](/configs/dependencies.yaml).
+Now create an empty file at `$PWD/configs/overrides/dependencies.yaml` and gitignore it. You will be able to override what is specified in the comitted dependencies file in this overrides file for your custom environment setup.
+
+### Running your service
+Run `start-consulship` to start consul in Docker and run consulship to copy and register your dependencies.
+
+## Using consulship directly
+The following approach is no longer recommended as we now have a script to automate these steps.
 
 ### Running consul
 

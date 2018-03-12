@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 # Download consul-env.yaml and start consul+consulship
-set -e
+
 consul_port() {
   local envname=$1
-  docker ps --filter "label=consulship-env=$envname" --format "{{ .Ports }}" | tr "," \\n  | grep 8500 | sed -E 's/.*:([0-9]+).*/\1/'
+  docker ps -a --filter "label=consulship-env=$envname" --format "{{ .Ports }}" | tr "," \\n  | grep 8500 | sed -E 's/.*:([0-9]+).*/\1/'
+}
+
+consul_stop() {
+  echo Stopping container
+  container=$(docker ps --filter "label=consulship-env=$envname" --format "{{ .ID }}")
+  docker stop $container
+  docker rm $container
 }
 
 envname=$(basename $PWD)
@@ -15,12 +22,23 @@ fi
 
 CONSUL_VERSION=0.7.5
 
+if [[ ! -f $HOME/.consulship ]]; then
+  >&2 echo "Please create ~/.consulship and set GS_CONSUL_ENVS to the consul-env.yaml file stored in Google Storage"
+  exit 1
+fi
+
+source $HOME/.consulship
+if [[ -z $GS_CONSUL_ENVS ]]; then
+  >&2 echo "Set GS_CONSUL_ENVS to the consul-env.yaml file stored in Google Storage"
+  exit 1
+fi
+
+gsutil cp $GS_CONSUL_ENVS ./.consulship/consul-env.yaml
+
 network=$envname-consulship
 env_consul_port=$(consul_port $envname)
 if [[ ! -z $env_consul_port && -z $join_envname ]]; then
-  container=$(docker ps --filter "label=consulship-env=$envname" --format "{{ .ID }}")
-  docker stop $container
-  docker rm $container
+  consul_stop
   env_consul_port=
 fi
 
@@ -35,3 +53,4 @@ env_consul_port=$(consul_port $envname)
 consul_addr=127.0.0.1:$env_consul_port
 docker run --network $network -it -e LOCAL_CONSUL_ADDR=${envname}-consul:8500 -v $PWD:/app fresh8/consulship:latest
 CONSUL_ADDR=$consul_addr make run
+consul_stop
